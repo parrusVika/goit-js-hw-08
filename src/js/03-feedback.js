@@ -1,5 +1,6 @@
 import throttle from 'lodash.throttle';
 // const throttle = require('lodash.throttle');
+const LOCAL_STORAGE_KEY = 'feedback-form-state';
 
 const refs = {
     form: document.querySelector('.feedback-form'),
@@ -7,22 +8,22 @@ const refs = {
     input: document.querySelector('input'),
 };
 
-
-const onForm = {}
 refs.form.addEventListener('input', throttle(onFormInput, 500));
+let saveText = JSON.parse(localStorage.getItem('feedback-form-state'))
+populateOnForm();
 function onFormInput(evt) {
-    onForm[evt.target.name] = evt.target.value;
-    localStorage.setItem('feedback-form-state', JSON.stringify(onForm));
-}
+    if (!saveText) {
+        const onForm = {};
+        onForm[evt.target.name] = evt.target.value;
 
-function getText(evt) {
-    const saveText = JSON.parse(localStorage.getItem('feedback-form-state'))
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(onForm));
+    } else {
+        onForm = { ...saveText };
+        onForm[evt.target.name] = evt.target.value;
 
-    if (savedFormData) {
-        refs.input.value = saveText.email || '';
-        refs.textarea.value = saveText.text || '';
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(onForm));
     }
-};
+}
 
 function onFormSubmit(evt) {
     evt.preventDefault();
@@ -38,4 +39,10 @@ function onFormSubmit(evt) {
     saveText = '';
 
     e.target.reset();
+}
+function populateOnForm() {
+    if (saveText) {
+        refs.input.value = saveText.email || '';
+        refs.textarea.value = saveText.message || '';
+    }
 }
