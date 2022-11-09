@@ -18,7 +18,7 @@ function onFormInput(evt) {
 
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(onForm));
     } else {
-        onForm = { ...saveText };
+        const onForm = { ...saveText };
         onForm[evt.target.name] = evt.target.value;
 
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(onForm));
